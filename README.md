@@ -12,7 +12,7 @@ SCREEN_WIDTH = 700
 SCREEN_HEIGHT = 500
  
 # --- Classes ---
-class Train(pygame.sprite.Sprite):
+class Player(pygame.sprite.Sprite):
     #This is the train
     def __init__(self):
         
@@ -22,8 +22,9 @@ class Train(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         
     
-    def update(self):
-    
+    def move(self):
+                    
+            
         self.rect.x = self.rect.x + 5
     
         
@@ -51,7 +52,7 @@ class Platform(pygame.sprite.Sprite):
  
  
  
-class Player(pygame.sprite.Sprite):
+class Pointer(pygame.sprite.Sprite):
     """ This class represents the tool the player draws with. """
     def __init__(self):
         super().__init__()
@@ -107,19 +108,20 @@ class Game(object):
             self.platform_list.add(platform)
             self.all_sprites_list.add(platform)
  
-        # Create the player
-        self.player = Player()
-        self.all_sprites_list.add(self.player)
+        # Create the pointer
+        self.pointer = Pointer()
+        self.all_sprites_list.add(self.pointer)
 
         # Creat train
 
-        train = Train()
+        self.player = Player()
         
-        self.train_list.add(train)
-        train.rect.x = 10
-        train.rect.y = 230
         
- 
+        self.all_sprites_list.add(self.player)
+        self.player.rect.x = 10
+        self.player.rect.y = 230
+        
+        
     def process_events(self):
         """ Process all of the events. Return a "True" if we need
             to close the window. """
@@ -127,15 +129,17 @@ class Game(object):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return True
-            keys = pygame.key.get_pressed()
+        keys = pygame.key.get_pressed()
             
-            if keys[pygame.K_SPACE]:
+        if keys[pygame.K_SPACE]:
+            
+            self.player.move()  
                     
-                self.train_list.update()
+                
                     
                     
         if pygame.mouse.get_pressed()[0]:               
-            pygame.sprite.spritecollide(self.player, self.sky_list, True)
+            pygame.sprite.spritecollide(self.pointer, self.sky_list, True)
 
                     
  
@@ -204,7 +208,7 @@ def main():
         game.display_frame(screen)
  
         # Pause for the next frame
-        clock.tick(120)
+        clock.tick(60)
  
     # Close window and exit
     pygame.quit()
